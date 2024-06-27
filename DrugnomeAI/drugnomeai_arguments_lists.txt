@@ -1,0 +1,69 @@
+Run "drugnomeai -h" after installing to see all possible arguments
+
+(drugnome) [hhy553@ddy113 ~]$ drugnomeai -h
+usage: drugnomeai [-h] -o OUTPUT_DIR [-c CONFIG_FILE]
+                  [-r {all,pre,boruta,pu,post,post_unsup,debug}] [-f]
+                  [-s {et,rf,svc,gb,xgb,dnn,stack,nb} [{et,rf,svc,gb,xgb,dnn,stack,nb} ...]]
+                  [-d {pharos,inter} [{pharos,inter} ...]]
+                  [-x {dom,fam,sup} [{dom,fam,sup} ...]]
+                  [-t {1,2,3A,3B} [{1,2,3A,3B} ...]]
+                  [-p {tclin,tchem,tbio,tdark} [{tclin,tchem,tbio,tdark} ...]]
+                  [-m] [-l] [-k KNOWN_GENES_FILE] [-n NTHREADS]
+                  [-i ITERATIONS]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o OUTPUT_DIR, --output-dir OUTPUT_DIR
+                        Output directory name
+                        (absolute/relative path e.g. ./CKD, /tmp/Epilepsy-testing, etc.)
+                        If it doesn't exist it will automatically be created [Required]
+                        
+  -c CONFIG_FILE, --config-file CONFIG_FILE
+                        Config file (.yaml) with run parameters [Required for disease specific analysis]
+                        
+  -r {all,pre,boruta,pu,post,post_unsup,debug}, --run-tag {all,pre,boruta,pu,post,post_unsup,debug}
+                        Specify type of analysis to run (default: all)
+                        
+  -f, --fast            Fast training using only 4 classifiers: Extra Trees, Random Forest, SVC and Gradient Boosting.
+                        By default, mantis-ml uses 6 supervised models for training: Extra Trees, Random Forest, SVC, Gradient Boosting, XGBoost and Deep Neural Net.
+                        
+  -s {et,rf,svc,gb,xgb,dnn,stack,nb} [{et,rf,svc,gb,xgb,dnn,stack,nb} ...], --superv-models {et,rf,svc,gb,xgb,dnn,stack,nb} [{et,rf,svc,gb,xgb,dnn,stack,nb} ...]
+                        Explicitly specify which supervised models to be used for training. This overrides the '-f/--fast' option.
+                        - Options:
+                         et: Extra Trees
+                         rf: Random Forest
+                         gb: Gradient Boosting
+                         xgb: XGBoost
+                         svc: Support Vector Classifier
+                         dnn: Deep Neural Net
+                         stack: Stacking classifier
+                         nb: Naive Bayes
+                        
+                        Multiple models may be specified using a ',' separator, e.g. -m et,rf,stack
+                        When this option is not specified, 6 models are trained by default with mantis-ml: Extra Trees, Random Forest, SVC, Gradient Boosting, XGBoost and Deep Neural Net. 
+                        
+  -d {pharos,inter} [{pharos,inter} ...], --data-source {pharos,inter} [{pharos,inter} ...]
+                        Specify which data sources to include - pharos: pharos, inter: inter_pro] (default: all)
+                        
+  -x {dom,fam,sup} [{dom,fam,sup} ...], --inter-pro {dom,fam,sup} [{dom,fam,sup} ...]
+                        Specify which InterPro features you would like - dom: domains, fam: families, sup: super homologous families. (default: None)
+                         Labels can be specified either by selecting -t/-p option or by a list of custom seed genes using -k option
+                        
+  -t {1,2,3A,3B} [{1,2,3A,3B} ...], --tier-tag {1,2,3A,3B} [{1,2,3A,3B} ...]
+                        Specify the tier(s) of druggability you wish to train on. 1: Tier 1, 2: Tier 2, 3A: Tier 3A, and 3B Tier 3B (default: all)
+                        
+  -p {tclin,tchem,tbio,tdark} [{tclin,tchem,tbio,tdark} ...], --pharos-tag {tclin,tchem,tbio,tdark} [{tclin,tchem,tbio,tdark} ...]
+                        Specify the pharos tier(s) of druggability you wish to train on. tclin: Tclin, tchem: Tchem, tbio: Tbio, and tdark: Tdark (default: all)
+                        
+  -m, --mantis-ml       Choose to use generic feautres derived from mantis-ml; incl. ExAC, Essential Mouse Genes, GnomAD, Genic Intolerance Scores, GWAS & MGI Essential features.
+                        
+  -l, --genic-intol     Choose to include Genic Intolerance Scores from mantis-ml
+                        
+  -k KNOWN_GENES_FILE, --known-genes-file KNOWN_GENES_FILE
+                        File with custom list of known genes used for training (new-line separated)
+                        
+  -n NTHREADS, --nthreads NTHREADS
+                        Number of threads (default: 4)
+                        
+  -i ITERATIONS, --iterations ITERATIONS
+                        Number of stochastic iterations for semi-supervised learning (default: 10)
