@@ -46,6 +46,50 @@ def perform_pca(features, n_components=3):
     features_pca = pca.fit_transform(features)
     return features_pca
 
+def determine_optimal_k(data, k_range):
+    """Determine the optimal number of clusters using the elbow method, silhouette score, and DBI."""
+    wcss = []
+    silhouette_scores = []
+    dbi_scores = []
+    
+    for k in k_range:
+        kmeans = KMeans(n_clusters=k, random_state=42)
+        kmeans.fit(data)
+        wcss.append(kmeans.inertia_)
+        
+        silhouette_avg = silhouette_score(data, kmeans.labels_)
+        silhouette_scores.append(silhouette_avg)
+        
+        dbi = davies_bouldin_score(data, kmeans.labels_)
+        dbi_scores.append(dbi)
+    
+    return wcss, silhouette_scores, dbi_scores
+
+def plot_evaluation_metrics(k_range, wcss, silhouette_scores, dbi_scores):
+    """Plot the evaluation metrics for different values of k."""
+    plt.figure(figsize=(15, 5))
+
+    plt.subplot(1, 3, 1)
+    plt.plot(k_range, wcss, 'bx-')
+    plt.xlabel('Number of clusters (k)')
+    plt.ylabel('WCSS')
+    plt.title('Elbow Method for Optimal k')
+
+    plt.subplot(1, 3, 2)
+    plt.plot(k_range, silhouette_scores, 'bx-')
+    plt.xlabel('Number of clusters (k)')
+    plt.ylabel('Silhouette Score')
+    plt.title('Silhouette Score for Optimal k')
+
+    plt.subplot(1, 3, 3)
+    plt.plot(k_range, dbi_scores, 'bx-')
+    plt.xlabel('Number of clusters (k)')
+    plt.ylabel('Davies-Bouldin Index')
+    plt.title('DBI for Optimal k')
+
+    plt.tight_layout()
+    plt.show()
+
 def plot_clusters_2d(features_pca, clusters, title):
     """Plot 2D scatter plot of clusters."""
     plt.figure(figsize=(10, 6))
@@ -77,11 +121,20 @@ def main():
     features_transformed = features_transformed.dropna()
     final_indices = features_transformed.index
     
+    # Determine optimal k
+    k_range = range(2, 11)
+    wcss, silhouette_scores, dbi_scores = determine_optimal_k(features_transformed, k_range)
+    
+    # Plot evaluation metrics
+    plot_evaluation_metrics(k_range, wcss, silhouette_scores, dbi_scores)
+    
+    # Set k to 3
+    k = 3
+    
     # Perform PCA
     features_pca = perform_pca(features_transformed)
     
     # Perform K-Means clustering
-    k = 3
     kmeans = KMeans(n_clusters=k, random_state=42)
     clusters = kmeans.fit_predict(features_pca)
     
@@ -98,7 +151,8 @@ def main():
     output_clustered_file = '/Users/cheaulee/Desktop/mscproject/results/druggability_kmeans.csv'
     results.to_csv(output_clustered_file, index=False)
     
-    print(f"Clustered genes with k=3 have been saved to {output_clustered_file}")
+    print(f"Clustered genes with k={k} have been saved to {output_clustered_file}")
 
 if __name__ == "__main__":
     main()
+
