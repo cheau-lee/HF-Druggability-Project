@@ -96,7 +96,7 @@ def plot_clusters_2d(features_pca, clusters):
     """Plot 2D scatter plot of clusters."""
     plt.figure(figsize=(10, 6))
     sns.scatterplot(x=features_pca[:, 0], y=features_pca[:, 1], hue=clusters, palette='tab10', s=100)
-    plt.title('K-Means Clusters on PCA-reduced Data')
+    plt.title('K-Means Clusters on Processed Features')
     plt.xlabel('PCA Component 1')
     plt.ylabel('PCA Component 2')
     plt.legend(title='Cluster')
